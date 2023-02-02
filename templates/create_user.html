@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if first_name %}
+    <h1>Hello {{ first_name}} {{ last_name }} </h1>
+{% else %}
+    <h1>User Registration</h1>
+    <br>
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ form.first_name.label( class='form-label' ) }}
+        {{ form.first_name( class='form-control' ) }}
+        <br>
+        {{ form.middle_name.label( class='form-label' ) }}
+        {{ form.middle_name( class='form-control' ) }}
+        <br>
+        {{ form.last_name.label( class='form-label' ) }}
+        {{ form.last_name( class='form-control' ) }}
+        <br>
+        {{ form.contact_number.label( class='form-label' ) }}
+        {{ form.contact_number( class='form-control' ) }}
+        <br>
+        {{ form.company_email.label( class='form-label' ) }}
+        {{ form.company_email( class='form-control' ) }}
+        <br>
+        {{ form.personal_email.label( class='form-label' ) }}
+        {{ form.personal_email( class='form-control' ) }}
+        <br>
+        {{ form.submit( class='btn btn-secondary') }}
+    </form>
+{% endif %}
+
+{% endblock %}
