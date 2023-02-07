@@ -7,7 +7,33 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
+# Add Database
+#  Old SQLite DB
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dst_management.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://passwrd:1234@localhost/dst_management'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Secret Key!
 app.config['SECRET_KEY'] = 'Secret Key'
+db = SQLAlchemy(app)
+
+with app.app_context():
+# Create Model
+    class Users(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        first_name = db.Column(db.String(50), nullable=False)
+        middle_name = db.Column(db.String(50), nullable=False) 
+        last_name = db.Column(db.String(50), nullable=False) 
+        contact_number = db.Column(db.String(20), nullable=False) 
+        company_email = db.Column(db.String(100), nullable=False, unique=True)
+        personal_email = db.Column(db.String(100), nullable=False)
+        date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+        # Create A String
+        def __rerpr__(self):
+            return '<Name %r>' % self.first_name
+
+    db.create_all()
+
 
 # Create a Form Class
 class CreateUserForm(FlaskForm):
@@ -35,6 +61,17 @@ def create_user():
     form = CreateUserForm()
     # Validate Form
     if form.validate_on_submit():
+        user = Users.query.filter_by(company_email=form.company_email.data).first()
+        if user is None:
+            user = Users(   first_name = form.first_name.data, 
+                            middle_name = form.middle_name.data,
+                            last_name = form.last_name.data, 
+                            contact_number = form.contact_number.data, 
+                            company_email = form.company_email.data, 
+                            personal_email = form.personal_email.data
+                        )
+            db.session.add(user)
+            db.session.commit()
         first_name = form.first_name.data
         form.first_name.data = ''
         middle_name = form.middle_name.data
@@ -47,7 +84,8 @@ def create_user():
         form.company_email.data = ''
         personal_email = form.personal_email.data
         form.personal_email.data = ''
-
+        flash("User has been registered successfully.")
+    our_users = Users.query.order_by(Users.date_added)
     return render_template('create_user.html',
         first_name = first_name,
         middle_name = middle_name,
@@ -55,7 +93,9 @@ def create_user():
         contact_number = contact_number,
         company_email = company_email,
         personal_email = personal_email,
-        form = form)
+        form = form,
+        our_users = our_users
+        )
 
 @app.route('/user/<name>')
 def user(name):
