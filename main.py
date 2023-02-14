@@ -17,6 +17,7 @@ app.config['SECRET_KEY'] = 'Secret Key'
 db = SQLAlchemy(app)
 
 with app.app_context():
+
 # Create Model
     class Users(db.Model):
         id = db.Column(db.Integer, primary_key=True)
@@ -49,7 +50,38 @@ class CreateUserForm(FlaskForm):
 def home():
     return render_template('index.html')
 
+# Update User Record
+@app.route('/update_user/<int:id>', methods=['GET', 'POST'])
+def update_user(id):
+    form = CreateUserForm()
+    user_to_update = Users.query.get_or_404(id)
+    if request.method == 'POST':
+        user_to_update.first_name = request.form['first_name']
+        user_to_update.middle_name = request.form['middle_name']
+        user_to_update.last_name = request.form['last_name']
+        user_to_update.contact_number = request.form['contact_number']
+        user_to_update.company_email = request.form['company_email']
+        user_to_update.personal_email = request.form['personal_email']
+        try:
+            db.session.commit()
+            flash('User Updated Successfully!')
+            return render_template('update_user.html',
+                form=form,
+                user_to_update = user_to_update)
+        except:
+            db.session.commit()
+            flash('Error! Looks like there is a problem')
+            return render_template('update_user.html',
+                form=form,
+                user_to_update = user_to_update)
+    else:
+        return render_template('update_user.html',
+            form=form,
+            user_to_update = user_to_update)
 
+  
+
+# Add User
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
     first_name = None

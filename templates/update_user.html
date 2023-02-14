@@ -4,59 +4,50 @@
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>   
+    </div>
+    
 {% endfor %}
 
 {% if first_name %}
-    <h1>User Added!</h1>
-    <br/><br/>
+
     <table class="table table-hover table-bordered table-striped">
     {% for our_user in our_users %}
         <tr>
             <td>
-            {{ our_user.id }}:  <a href="{{ url_for('update_user', id=our_user.id) }}"> {{ our_user.last_name|title }}, {{ our_user.first_name|title}} {{ our_user.middle_name }} </a> - {{ our_user.company_email}} - {{ our_user.personal_email }}
+            {{ our_user.id }}:  {{ our_user.last_name|title }}, {{ our_user.first_name|title}} {{ our_user.middle_name }} - {{ our_user.company_email}} - {{ our_user.personal_email }}
             </td>
         </tr>
     {% endfor %}
     </table>
 {% else %}
-    <h1>User Registration</h1>
-    <br/>
+    <h1>Update User...</h1>
+    <br>
 <div class="shadow p-3 mb-5 bg-body">
-    <form action="" method="POST">
+    <form action="/update_user/{{ user_to_update.id }}" method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.first_name.label( class='form-label' ) }}
-        {{ form.first_name( class='form-control' ) }}
+        {{ form.first_name( class='form-control', value=user_to_update.first_name ) }}
         <br>
         {{ form.middle_name.label( class='form-label' ) }}
-        {{ form.middle_name( class='form-control' ) }}
+        {{ form.middle_name( class='form-control', value=user_to_update.middle_name ) }}
         <br>
         {{ form.last_name.label( class='form-label' ) }}
-        {{ form.last_name( class='form-control' ) }}
+        {{ form.last_name( class='form-control', value=user_to_update.last_name ) }}
         <br>
         {{ form.contact_number.label( class='form-label' ) }}
-        {{ form.contact_number( class='form-control' ) }}
+        {{ form.contact_number( class='form-control', value=user_to_update.contact_number ) }}
         <br>
         {{ form.company_email.label( class='form-label' ) }}
-        {{ form.company_email( class='form-control' ) }}
+        {{ form.company_email( class='form-control', value=user_to_update.company_email ) }}
         <br>
         {{ form.personal_email.label( class='form-label' ) }}
-        {{ form.personal_email( class='form-control' ) }}
+        {{ form.personal_email( class='form-control', value=user_to_update.personal_email ) }}
         <br>
         {{ form.submit( class='btn btn-secondary') }}
     </form>
 </div>
+    <br><br><br>
 {% endif %}
-
-<table class="table table-hover table-bordered table-striped">
-{% for our_user in our_users %}
-    <tr>
-        <td>
-        {{ our_user.id }}: <a href="{{ url_for('update_user', id=our_user.id) }}"> {{ our_user.last_name|title }}, {{ our_user.first_name|title}} {{ our_user.middle_name }} </a> - {{ our_user.company_email}} - {{ our_user.personal_email }}
-        </td>
-    </tr>
-{% endfor %}
-</table>
 
 {% endblock %}
